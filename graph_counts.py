@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow):
+def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphType, isPercentage, numShow, savePDF):
     
     '''
         Visualize particular columns in dataframe. 
@@ -14,11 +14,17 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
            
            hasSubset: takes a boolean as input. Whether to take a subset of the dataframe
            
+           subsetCol: takes both a string and 'None'. String for the column name; 'None' if hasSubset is False
+           
+           subsetValue: takes string, integer and 'None'. String and integer for the subset criteria; 'None' if hasSubset is False
+           
            graphType: takes a string as input.Type of graph(bar, pie, hist, area...)
            
            isPercentage: takes a boolean as input. Show the graph in raw counts or percentage
            
            numShow: takes both integer and the string 'all' as input. The number of categories to show; 'all' for all categories
+           
+           savePDF: takes boolean as input. Whether to save image as a pdf
       
       Return:
       -------
@@ -39,14 +45,15 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
     else:
         pass
 
+    
+    #subset 
     if hasSubset is False:
         col = dataframe.loc[:,str(column)]
-    else:
-        print('please input the subset Column')
-        subsetCol = input()
-        print('please input the subset Value')
-        subsetValue = input()
-        col = dataframe.loc[dataframe[str(subsetCol)]==str(subsetValue), str(column)]
+    else: 
+        subsetCol = str(subset_Col) 
+        subsetValue = str(subset_Value)
+        
+        col = dataframe.loc[dataframe[subsetCol]==subsetValue, str(column)]
         
         if subsetValue == 'NonLowPoint':
             cusColor = 'blue'
@@ -61,7 +68,8 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
     else:
         value_count = col.value_counts()
         plt_title = 'Raw Count of Each by' + str(column)
-        
+    
+    #number of categories
     if str(numShow) != 'all':
         value_count = value_count.head(numShow)
 
@@ -78,5 +86,12 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
         
     elif str(graphType) == 'area':
         value_count.plot.area(color = cusColor)
+        
+    #save as PDF
+    if savePDF:
+        pass
+    else:
+        
+    
         
     plt.title(plt_title)
