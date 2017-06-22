@@ -1,14 +1,33 @@
-#build a function for percentage and raw graph:
-#ask for raw input
 import matplotlib.pyplot as plt
 def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow):
-    '''dataframe: input the dataframe you want to visualize
-       column: input the specific column(s) you want to visualize
-       hasSubset: indicate if you want to have a subset of data
-       graphType: type of graph(bar, pie, hist, area...)
-       isPercentage: indicate raw value counts or percentage(boolean)
-       numShow: number of categories to show, input 'all' for all categories '''
     
+    '''
+        Visualize particular columns in dataframe. 
+    
+    
+       Parameters:
+       ----------
+       
+           dataframe: takes a dataframe as input
+           
+           column: takes a column of the dataframe as input
+           
+           hasSubset: takes a boolean as input. Whether to take a subset of the dataframe
+           
+           graphType: takes a string as input.Type of graph(bar, pie, hist, area...)
+           
+           isPercentage: takes a boolean as input. Show the graph in raw counts or percentage
+           
+           numShow: takes both integer and the string 'all' as input. The number of categories to show; 'all' for all categories
+      
+      Return:
+      -------
+      
+          None
+          
+      '''
+    
+    #assigin color
     cusColor = 'b'
     if len(set(dataframe.loc[:,'BEERTYPE'])) == 1:
         for each in set(dataframe.loc[:,'BEERTYPE']):
@@ -16,6 +35,9 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
                 cusColor = 'blue'
             elif each == 'LowPoint':
                 cusColor = 'orange'
+               
+    else:
+        pass
 
     if hasSubset is False:
         col = dataframe.loc[:,str(column)]
@@ -31,7 +53,7 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
         elif subsetValue == 'LowPoint':
             cusColor = 'orange'    
     
-    
+    #show percentage or raw value
     if isPercentage:
         value_count = col.value_counts()/sum(col.value_counts())
         plt_title = 'Percentage of Each by ' + str(column)
@@ -43,7 +65,8 @@ def graph_counts(dataframe, column, hasSubset, graphType, isPercentage, numShow)
     if str(numShow) != 'all':
         value_count = value_count.head(numShow)
 
-    '''below is the type of graph to choose'''        
+        
+    #type of graph   
     if str(graphType) == 'bar':
         value_count.plot.bar(title = plt_title, color = cusColor)
         
