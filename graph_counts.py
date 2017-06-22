@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphType, isPercentage, numShow, savePDF):
+def graph_counts(state, dataframe, column, hasSubset, subset_Col, subset_Value, graphType, isPercentage, numShow, savePDF, savePNG):
     
     '''
         Visualize particular columns in dataframe. 
@@ -7,6 +7,8 @@ def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphTy
     
        Parameters:
        ----------
+           
+           state: takes a string. The name of the state
        
            dataframe: takes a dataframe as input
            
@@ -25,6 +27,8 @@ def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphTy
            numShow: takes both integer and the string 'all' as input. The number of categories to show; 'all' for all categories
            
            savePDF: takes boolean as input. Whether to save image as a pdf
+           
+           savePNG: takes boolean as input. Whether to save image as a PNG
       
       Return:
       -------
@@ -45,7 +49,7 @@ def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphTy
     else:
         pass
 
-    
+    graph_subset_name = ''
     #subset 
     if hasSubset is False:
         col = dataframe.loc[:,str(column)]
@@ -59,6 +63,8 @@ def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphTy
             cusColor = 'blue'
         elif subsetValue == 'LowPoint':
             cusColor = 'orange'    
+        
+        graph_subset_name = 'with subset '+str(subset_Col) +'where value is '+str(subset_Value)
     
     #show percentage or raw value
     if isPercentage:
@@ -73,25 +79,35 @@ def graph_counts(dataframe, column, hasSubset, subset_Col, subset_Value, graphTy
     if str(numShow) != 'all':
         value_count = value_count.head(numShow)
 
-        
-    #type of graph   
+ 
+    #type of graph  
+
     if str(graphType) == 'bar':
-        value_count.plot.bar(title = plt_title, color = cusColor)
-        
+        ax = value_count.plot.bar(title = plt_title, color = cusColor)
+ 
     elif str(graphType) == 'pie':
-        value_count.plot.pie(autopct='%1.1f%%')
+        ax = value_count.plot.pie(autopct='%1.1f%%')
         
     elif str(graphType) == 'hist':
-        value_count.plot(kind = 'hist', color = cusColor)
+        ax = value_count.plot(kind = 'hist', color = cusColor)
         
     elif str(graphType) == 'area':
-        value_count.plot.area(color = cusColor)
-        
-    #save as PDF
-    if savePDF:
-        pass
-    else:
-        
-    
-        
+        ax = value_count.plot.area(color = cusColor)
     plt.title(plt_title)
+    
+    #save as PDF
+    fig = ax.get_figure()  
+    
+    fig_name = str(graphType) + ' plot of '+ str(plt_title) + graph_subset_name + ' -'+str(state)
+    fig_name_pdf = fig_name+'.pdf'
+    fig_name_png = fig_name+'.png'
+    
+    if savePDF and savePNG:
+        fig.savefig(fig_name_pdf)
+        fig.savefig(fig_name_png)
+    else:
+        if savePNG:
+            fig.savefig(fig_name_png)
+            
+        elif savePDF:
+            fig.savefig(fig_name_pdf)
